@@ -9,6 +9,7 @@ framework module GoogleCast {
   link framework "CoreData"
   link framework "CoreFoundation"
   link framework "CoreGraphics"
+  link framework "CoreImage"
   link framework "CoreMedia"
   link framework "CoreText"
   link framework "Foundation"
