@@ -2,7 +2,7 @@
 This is a repository to provide an SPM package for the Google Cast SDK since they only provide a CocoaPod version. This repo should be deprecated as soon as they provide an SPM.
 
 ## How to add a new version
-As of now (2023-05-31) new versions are provided from the Google developer site: https://developers.google.com/cast/docs/ios_sender#xcframework_beta
+As of now (2023-05-31) new versions are provided from the Google developer site: https://developers.google.com/cast/docs/ios_sender#xcframework
 
 1. Unzip the file from Google.
 2. Create a new branch from `main`.
