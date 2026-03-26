@@ -6,26 +6,29 @@
 # Inputs
 # ------
 # - Argument 1: An absolute path to a `OpenSourceLicenses` directory,
-#   containing a bunch of html files and an `oss_licenses_index.txt` file.
+#   containing `oss_licenses_index.plist` and `oss_licenses.bin`.
 #
 # Outputs
 # -------
 # - A `LICENSE` file in the same directory as the script. The contents of the
-#   file will be the combined licenses from all the html files.
+#   file will be the combined licenses.
 # =========================================
 
+require 'cfpropertylist'
+
 def parse_index(filepath)
-    lines = File.readlines(filepath)
-    lines.map do |line|
-        components = line.split("/")
-        {:name => components.last, :license_filename => components.first}
+    plist = CFPropertyList::List.new(:file => filepath)
+    entries = CFPropertyList.native_types(plist.value)
+    entries.map do |entry|
+        {:name => entry["name"], :offset => entry["offset"], :size => entry["size"]}
     end
 end
 
-def get_license_text(license_path)
-    raw_text = File.read(license_path)
-    plaintext = raw_text[/<pre>(.*)<\/pre>/m, 1]
-    return plaintext
+def get_license_text(bin_path, offset, size)
+    File.open(bin_path, "rb") do |f|
+        f.seek(offset)
+        f.read(size)
+    end
 end
 
 def main(licenses_directory)
@@ -34,11 +37,12 @@ def main(licenses_directory)
     # where it's invoked from.
     Dir.chdir(File.expand_path(File.dirname(__FILE__)))
 
-    licenses = parse_index(File.join(licenses_directory, "oss_licenses_index.txt"))
+    licenses = parse_index(File.join(licenses_directory, "oss_licenses_index.plist"))
+    bin_path = File.join(licenses_directory, "oss_licenses.bin")
     combined_license = licenses.map do |license|
         <<~EOF
         #{license[:name]}
-        #{get_license_text(File.join(licenses_directory, license[:license_filename]))}
+        #{get_license_text(bin_path, license[:offset], license[:size])}
         EOF
     end.join("\n\n")
 
