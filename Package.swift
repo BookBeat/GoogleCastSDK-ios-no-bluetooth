@@ -16,12 +16,17 @@ let package = Package(
         .library(
             name: "GoogleCast",
             type: .static,
-            targets: ["GoogleCast"]
+            targets: ["GoogleCastWrapper"]
         )
     ],
     targets: [
+        .target(
+            name: "GoogleCastWrapper",
+            dependencies: ["GoogleCastBinary"],
+            path: "Sources/GoogleCastWrapper"
+        ),
         .binaryTarget(
-            name: "GoogleCast",
+            name: "GoogleCastBinary",
             url: "https://github.com/BookBeat/GoogleCastSDK-ios-no-bluetooth/releases/download/\(PackageMetadata.version)/GoogleCast.xcframework.zip",
             checksum: PackageMetadata.checksum
         )
